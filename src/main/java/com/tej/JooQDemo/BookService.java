@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -22,21 +23,41 @@ public class BookService {
                 .fetchInto(Book.class);
     }
 
-    public void insertBook(Book book,Author author) {
+    public String insertBook(Book book,Author author) throws RuntimeException {
         System.out.println("gggggggggggggggggggggggggggggggggg");
         log.info("RequestInsertBook: {},{} ",book,author);
-//        try {
-            context
-                    .insertInto(Tables.AUTHOR, Tables.AUTHOR.FIRSTNAME, Tables.AUTHOR.LASTNAME)
-                    .values(author.getFirstname(), author.getLastname())
-                    .execute();
-            context
-                    .insertInto(Tables.BOOK, Tables.BOOK.TITLE, Tables.BOOK.AUTHOR_ID)
-                    .values(book.getTitle(),book.getAuthorId())
-                    .execute();
+        try {
 
-//        } catch (Exception e) {
-//            throw new Exception(e.getMessage());
-//        }
+            context.transaction(configuration -> {
+                context
+                        .insertInto(Tables.AUTHOR, Tables.AUTHOR.FIRSTNAME, Tables.AUTHOR.LASTNAME)
+                        .values(author.getFirstname(), author.getLastname())
+                        .execute();
+                System.out.println("insert author success");
+
+                context
+                        .insertInto(Tables.BOOK, Tables.BOOK.TITLE, Tables.BOOK.AUTHOR_ID)
+                        .values(book.getTitle(),book.getAuthorId())
+                        .execute();
+                System.out.println("insert book success");
+            });
+
+//            context
+//                    .insertInto(Tables.AUTHOR, Tables.AUTHOR.FIRSTNAME, Tables.AUTHOR.LASTNAME)
+//                    .values(author.getFirstname(), author.getLastname())
+//                    .execute();
+//            boolean a = true;         }
+//
+//            context
+//                    .insertInto(Tables.BOOK, Tables.BOOK.TITLE, Tables.BOOK.AUTHOR_ID)
+//                    .values(book.getTitle(),book.getAuthorId())
+//                    .execute();
+
+            return "200";
+
+        } catch (RuntimeException e) {
+            System.err.println("Rollback Success");
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

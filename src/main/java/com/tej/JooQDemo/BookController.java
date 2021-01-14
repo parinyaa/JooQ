@@ -22,8 +22,15 @@ public class BookController {
     }
 
     @PostMapping("/saveBook")
-    public ResponseEntity <Void> postBook(@RequestBody BookReq req){
-        this.bookService.insertBook(req.getBook(),req.getAuthor());
-        return ResponseEntity.ok().build();
+    public ResponseEntity postBook(@RequestBody BookReq req){
+
+        String response = "";
+        try{
+            response = this.bookService.insertBook(req.getBook(),req.getAuthor());
+        } catch (Exception err) {
+            err.printStackTrace();
+            response = "500";
+        }
+        return ResponseEntity.ok(response);
     }
 }
