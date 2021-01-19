@@ -1,7 +1,11 @@
-package com.tej.JooQDemo;
+package com.tej.JooQDemo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tej.JooQDemo.BookInnerJoin;
+import com.tej.JooQDemo.BookReq;
 import com.tej.JooQDemo.jooq.sample.model.tables.pojos.Book;
+import com.tej.JooQDemo.repository.BookRepository;
+import com.tej.JooQDemo.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,13 +34,32 @@ public class BookController {
         return ResponseEntity.ok(this.bookService.getBooks());
     }
 
-    @GetMapping("/getBooks")
-    public ResponseEntity list() {
+//    @GetMapping("/getBooks")
+//    public ResponseEntity list() {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Content-Type", "application/json; charset=UTF-8");
+//        try{
+//
+//            List<BookInnerJoin>listData =  bookRepository.findOrderByIdAsc();
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            String json = mapper.writeValueAsString(listData);
+//
+//            return (new ResponseEntity<String>(json, headers, HttpStatus.OK));
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
+    @GetMapping("/getAllBook/{bookId}")
+    public ResponseEntity list(@PathVariable Integer bookId) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json; charset=UTF-8");
-        try{
+        try {
 
-            List<BookInnerJoin>listData =  bookRepository.findOrderByIdAsc();
+            List<BookInnerJoin> listData = bookRepository.findOrderByIdAsc(bookId);
 
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(listData);
